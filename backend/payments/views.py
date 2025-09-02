@@ -9,7 +9,8 @@ from datetime import datetime
 
 
 # stripe secret test key
-stripe.api_key="sk_test_51S2x3CLAnInAUXmHs1ztFB37wmqKR5GQI5YiTN3qIwiUB8FSmXYEKqmg0PKkHSoRFSiQgSqdXK9XpvJJAnXvIvAp00cc0sLTBC"
+from django.conf import settings
+stripe.api_key = getattr(settings, "STRIPE_TEST_SECRET_KEY", "")
 
 
 def save_card_in_db(cardData, email, cardId, customer_id, user):

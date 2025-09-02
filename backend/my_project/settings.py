@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 from datetime import timedelta
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -161,7 +163,7 @@ REST_FRAMEWORK = {
 
 # STRIPE
 STRIPE_TEST_PUBLISHABLE_KEY="pk_test_51S2x3CLAnInAUXmH4q5UdDX3DyqNAG61q3citA5X0Icp2sC7wowWo1RiAmk4hJ2bUT2T4taZXPqSXQxoU0ribXRP00NBJ509mi"
-STRIPE_TEST_SECRET_KEY="sk_test_51S2x3CLAnInAUXmHs1ztFB37wmqKR5GQI5YiTN3qIwiUB8FSmXYEKqmg0PKkHSoRFSiQgSqdXK9XpvJJAnXvIvAp00cc0sLTBC"
+STRIPE_TEST_SECRET_KEY = os.getenv("STRIPE_TEST_SECRET_KEY")
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
