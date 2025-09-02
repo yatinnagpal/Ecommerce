@@ -24,4 +24,4 @@ sqlparse==0.4.1
 stripe==2.60.0
 toml==0.10.2
 urllib3==1.26.6
-python-dotenv
+python-dotenv==0.19.2
