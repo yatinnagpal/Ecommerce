@@ -1,0 +1,2 @@
+// Replace with your actual Stripe publishable key
+export const STRIPE_PUBLISHABLE_KEY = "pk_test_51S2x3CLAnInAUXmH4q5UdDX3DyqNAG61q3citA5X0Icp2sC7wowWo1RiAmk4hJ2bUT2T4taZXPqSXQxoU0ribXRP00NBJ509mi";
