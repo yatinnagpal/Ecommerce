@@ -19,6 +19,51 @@ from .serializers import (
     AllOrdersListSerializer
 )
 
+# For password reset
+from django.utils.crypto import get_random_string
+from django.utils import timezone
+from django.contrib.auth.tokens import default_token_generator
+from rest_framework.views import APIView
+
+# Password Reset Request
+class PasswordResetRequestView(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        if not email:
+            return Response({'detail': 'Email is required.'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response({'detail': 'User with this email does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+
+        token = default_token_generator.make_token(user)
+        uid = user.pk
+
+        # Return the reset token and uid directly instead of sending email
+        return Response({
+            'detail': 'Password reset token generated successfully.',
+            'uid': uid,
+            'token': token
+        }, status=status.HTTP_200_OK)
+
+# Password Reset Confirm
+class PasswordResetConfirmView(APIView):
+    def post(self, request):
+        uid = request.data.get('uid')
+        token = request.data.get('token')
+        new_password = request.data.get('new_password')
+        if not (uid and token and new_password):
+            return Response({'detail': 'uid, token, and new_password are required.'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user = User.objects.get(pk=uid)
+        except User.DoesNotExist:
+            return Response({'detail': 'Invalid user.'}, status=status.HTTP_404_NOT_FOUND)
+        if not default_token_generator.check_token(user, token):
+            return Response({'detail': 'Invalid or expired token.'}, status=status.HTTP_400_BAD_REQUEST)
+        user.password = make_password(new_password)
+        user.save()
+        return Response({'detail': 'Password has been reset successfully.'}, status=status.HTTP_200_OK)
+
 
 # register user
 class UserRegisterView(APIView):

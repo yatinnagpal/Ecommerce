@@ -180,5 +180,8 @@ MEDIA_ROOT = 'static/images'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+# Email configuration removed - no longer needed for password reset
+
 # cors origin
 CORS_ALLOW_ALL_ORIGINS = True
