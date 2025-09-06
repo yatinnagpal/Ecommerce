@@ -29,6 +29,9 @@ from .serializers import (
     OrderSerializer
 )
 
+AllOrdersListSerializer = OrderSerializer
+CardsListSerializer = StripeCardSerializer
+
 # Password Reset Request
 class PasswordResetRequestView(APIView):
     def post(self, request):
@@ -232,7 +235,7 @@ class CreateUserAddressView(APIView):
         
         new_address = {
             "name": request.data["name"],
-            "user": request.user.id,
+            "user": request.user,   # ✅ use the actual user object
             "phone_number": request.data["phone_number"],
             "pin_code": request.data["pin_code"],
             "house_no": request.data["house_no"],
@@ -241,9 +244,10 @@ class CreateUserAddressView(APIView):
             "state": request.data["state"],
         }
 
-        serializer = BillingAddressSerializer(data=new_address, many=False)
+
+        serializer = BillingAddressSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(user=request.user)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -275,7 +279,7 @@ class UpdateUserAddressView(APIView):
 
                 serializer = BillingAddressSerializer(user_address, data=updated_address)
                 if serializer.is_valid():
-                    serializer.save()
+                    serializer.save(user=request.user)
                     return Response(serializer.data, status=status.HTTP_200_OK)
                 else:
                     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

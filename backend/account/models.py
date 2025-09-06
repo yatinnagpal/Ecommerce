@@ -33,6 +33,7 @@ class StripeModel(models.Model):
     )
     customer_id = models.CharField(
         max_length=200, 
+        default="0000-0000-0000-0000",
         help_text="Stripe customer ID"
     )
     
