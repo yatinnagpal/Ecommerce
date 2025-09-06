@@ -4,29 +4,29 @@ A modern, full-stack e-commerce application built with Django REST Framework (ba
 
 ## 🚀 Features
 
-- **User Authentication & Authorization**
+- User Authentication & Authorization
   - User registration and login
   - Password reset functionality (token-based, no email sending)
   - Protected routes and user sessions
 
-- **Product Management**
+- Product Management
   - Browse products with pagination
   - Product details with image gallery
   - Search and filter functionality
   - Featured products carousel
 
-- **Shopping Cart & Checkout**
+- Shopping Cart & Checkout
   - Add/remove items from cart
   - Update quantities
   - Secure checkout process
   - Order management
 
-- **Payment Integration**
+- Payment Integration
   - Stripe payment processing
   - Secure payment handling
   - Order confirmation
 
-- **User Dashboard**
+- User Dashboard
   - Order history
   - Profile management
   - Billing address management
@@ -81,33 +81,33 @@ FullStack_Ecommerce_App-main/
 
 ### Backend Setup
 
-1. **Navigate to backend directory:**
+1. Navigate to backend directory:
    ```bash
    cd backend
    ```
 
-2. **Create virtual environment:**
+2. Create virtual environment:
    ```bash
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
-3. **Install dependencies:**
+3. Install dependencies:
    ```bash
    pip install -r requirements.txt
    ```
 
-4. **Run migrations:**
+4. Run migrations:
    ```bash
    python manage.py migrate
    ```
 
-5. **Create superuser (optional):**
+5. Create superuser (optional):
    ```bash
    python manage.py createsuperuser
    ```
 
-6. **Start development server:**
+6. Start development server:
    ```bash
    python manage.py runserver
    ```
@@ -116,17 +116,17 @@ FullStack_Ecommerce_App-main/
 
 ### Frontend Setup
 
-1. **Navigate to frontend directory:**
+1. Navigate to frontend directory:
    ```bash
    cd frontend
    ```
 
-2. **Install dependencies:**
+2. Install dependencies:
    ```bash
    npm install
    ```
 
-3. **Start development server:**
+3. Start development server:
    ```bash
    npm start
    ```
@@ -227,17 +227,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ### Common Issues
 
-1. **Module not found errors**: Make sure all dependencies are installed
-2. **Database errors**: Run migrations with `python manage.py migrate`
-3. **CORS issues**: Ensure Django CORS settings are configured
-4. **Stripe errors**: Verify your Stripe API keys are correct
-
-### Getting Help
-
-- Check the [Issues](https://github.com/yourusername/FullStack_Ecommerce_App/issues) page
-- Create a new issue if you encounter a bug
-- Review the Django and React documentation
+1. Module not found errors: Make sure all dependencies are installed
+2. Database errors: Run migrations with `python manage.py migrate`
+3. CORS issues: Ensure Django CORS settings are configured
+4. Stripe errors: Verify your Stripe API keys are correct
 
 
 
-**Happy Shopping! 🛒**
+
+Happy Shopping! 🛒
