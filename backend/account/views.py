@@ -1,29 +1,33 @@
-from .models import StripeModel, BillingAddress, OrderModel
-from django.http import Http404
-from rest_framework import status
-from rest_framework.views import APIView
+"""
+Account views for user authentication, billing, and order management.
+
+This module contains API views for:
+- User authentication and registration
+- Password reset functionality
+- Billing address management
+- Order tracking and management
+- Payment card management
+"""
+
 from django.contrib.auth.models import User
-from rest_framework.response import Response
-from django.contrib.auth.hashers import make_password
-from rest_framework import authentication, permissions
-from rest_framework.decorators import permission_classes
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer 
-from rest_framework_simplejwt.views import TokenObtainPairView # for login page
-from django.contrib.auth.hashers import check_password
+from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
+from rest_framework import status, permissions
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+from .models import StripeModel, BillingAddress, OrderModel
 from .serializers import (
     UserSerializer, 
     UserRegisterTokenSerializer, 
-    CardsListSerializer, 
+    StripeCardSerializer, 
     BillingAddressSerializer,
-    AllOrdersListSerializer
+    OrderSerializer
 )
-
-# For password reset
-from django.utils.crypto import get_random_string
-from django.utils import timezone
-from django.contrib.auth.tokens import default_token_generator
-from rest_framework.views import APIView
 
 # Password Reset Request
 class PasswordResetRequestView(APIView):
