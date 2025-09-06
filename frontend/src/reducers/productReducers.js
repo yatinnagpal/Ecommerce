@@ -27,6 +27,10 @@ import {
     CHANGE_DELIVERY_STATUS_FAIL,
     CHANGE_DELIVERY_STATUS_RESET,
 
+    SEARCH_PRODUCTS_REQUEST,
+    SEARCH_PRODUCTS_SUCCESS,
+    SEARCH_PRODUCTS_FAIL,
+    SEARCH_PRODUCTS_RESET,
 
 } from '../constants/index'
 
@@ -234,6 +238,43 @@ export const changeDeliveryStatusReducer = (state = {}, action) => {
                 ...state,
                 loading: false,
                 success: false,
+                error: ""
+            }
+        default:
+            return state
+    }
+}
+
+// search products reducer
+export const searchProductsReducer = (state = { searchResults: [], searchTerm: '' }, action) => {
+    switch (action.type) {
+        case SEARCH_PRODUCTS_REQUEST:
+            return {
+                ...state,
+                loading: true,
+                searchResults: [],
+                error: ""
+            }
+        case SEARCH_PRODUCTS_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                searchResults: action.payload,
+                error: ""
+            }
+        case SEARCH_PRODUCTS_FAIL:
+            return {
+                ...state,
+                loading: false,
+                searchResults: [],
+                error: action.payload
+            }
+        case SEARCH_PRODUCTS_RESET:
+            return {
+                ...state,
+                loading: false,
+                searchResults: [],
+                searchTerm: '',
                 error: ""
             }
         default:

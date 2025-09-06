@@ -193,6 +193,8 @@ class UserAccountDeleteView(APIView):
 
 # get billing address (details of user address, all addresses)
 class UserAddressesListView(APIView):
+    
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
         user = request.user
@@ -204,11 +206,16 @@ class UserAddressesListView(APIView):
 
 # get specific address only
 class UserAddressDetailsView(APIView):
+    
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, pk):
-        user_address = BillingAddress.objects.get(id=pk)
-        serializer = BillingAddressSerializer(user_address, many=False)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        try:
+            user_address = BillingAddress.objects.get(id=pk)
+            serializer = BillingAddressSerializer(user_address, many=False)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except BillingAddress.DoesNotExist:
+            return Response({"detail": "Address not found."}, status=status.HTTP_404_NOT_FOUND)
 
 
 # create billing address
@@ -276,6 +283,8 @@ class UpdateUserAddressView(APIView):
 
 # delete address
 class DeleteUserAddressView(APIView):
+    
+    permission_classes = [permissions.IsAuthenticated]
 
     def delete(self, request, pk):
         

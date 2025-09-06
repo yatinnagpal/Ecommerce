@@ -46,7 +46,7 @@ export const createCard = (cardData) => async (dispatch, getState) => {
 
         // api call
         const { data } = await axios.post(
-            "/payments/create-card/",
+            "/api/payments/create-card/",
             {
                 'email': cardData.email,
                 'payment_method_id': cardData.payment_method_id,
@@ -90,7 +90,7 @@ export const chargeCustomer = (cardData) => async (dispatch, getState) => {
 
         // api call
         const { data } = await axios.post(
-            "/payments/charge-customer/",
+            "/api/payments/charge-customer/",
             cardData,
             config
         )
@@ -129,7 +129,7 @@ export const savedCardsList = () => async (dispatch, getState) => {
         }
 
         // api call
-        const { data } = await axios.get('/account/stripe-cards/', config)
+        const { data } = await axios.get('/api/account/stripe-cards/', config)
 
         dispatch({
             type: SAVED_CARDS_LIST_SUCCESS,
@@ -167,7 +167,7 @@ export const updateStripeCard = (cardData) => async (dispatch, getState) => {
 
         // api call
         const { data } = await axios.post(
-            "/payments/update-card/",
+            "/api/payments/update-card/",
             cardData,
             config
         )
@@ -208,7 +208,7 @@ export const deleteSavedCard = (card_number) => async (dispatch, getState) => {
 
         // api call
         const { data } = await axios.post(
-            '/payments/delete-card/',
+            '/api/payments/delete-card/',
             { "card_number": card_number },
             config
         )

@@ -156,7 +156,7 @@ export const checkTokenValidation = () => async (dispatch, getState) => {
         }
 
         // call api
-        const { data } = await axios.get("/payments/check-token/", config)
+        const { data } = await axios.get("/api/payments/check-token/", config)
 
         dispatch({
             type: CHECK_TOKEN_VALID_SUCCESS,
@@ -194,7 +194,7 @@ export const userDetails = (id) => async (dispatch, getState) => {
         }
 
         // call api
-        const { data } = await axios.get(`/account/user/${id}`, config)
+        const { data } = await axios.get(`/api/account/user/${id}`, config)
 
         dispatch({
             type: USER_DETAILS_SUCCESS,
@@ -231,7 +231,7 @@ export const userUpdateDetails = (userData) => async (dispatch, getState) => {
 
         // call api
         const { data } = await axios.put(
-            `/account/user_update/${userInfo.id}/`,
+            `/api/account/user_update/${userInfo.id}/`,
             {
                 "username": userData.username,
                 "email": userData.email,
@@ -276,7 +276,7 @@ export const userAccountDelete = (userData) => async (dispatch, getState) => {
 
         // call api
         const { data } = await axios.post(
-            `/account/user_delete/${userData.id}/`,
+            `/api/account/user_delete/${userData.id}/`,
             {
                 "password": userData.password
             },
@@ -317,7 +317,7 @@ export const getAllAddress = () => async (dispatch, getState) => {
 
         // call api
         const { data } = await axios.get(
-            "/account/all-address-details/",
+            "/api/account/all-address-details/",
             config
         )
 
@@ -355,7 +355,7 @@ export const getSingleAddress = (id) => async (dispatch, getState) => {
 
         // call api
         const { data } = await axios.get(
-            `/account/address-details/${id}/`,
+            `/api/account/address-details/${id}/`,
             config
         )
 
@@ -394,7 +394,7 @@ export const createUserAddress = (addressData) => async (dispatch, getState) => 
 
         // call api
         const { data } = await axios.post(
-            "/account/create-address/",
+            "/api/account/create-address/",
             addressData,
             config
         )
@@ -433,7 +433,7 @@ export const updateUserAddress = (id, addressData) => async (dispatch, getState)
 
         // call api
         const { data } = await axios.put(
-            `/account/update-address/${id}/`,
+            `/api/account/update-address/${id}/`,
             addressData,
             config
         )
@@ -472,7 +472,7 @@ export const deleteUserAddress = (id) => async (dispatch, getState) => {
 
         // call api
         const { data } = await axios.delete(
-            `/account/delete-address/${id}/`,
+            `/api/account/delete-address/${id}/`,
             config
         )
 
@@ -509,7 +509,7 @@ export const getAllOrders = () => async (dispatch, getState) => {
 
         // call api
         const { data } = await axios.get(
-            `/account/all-orders-list/`,
+            `/api/account/all-orders-list/`,
             config
         )
 

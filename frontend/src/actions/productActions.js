@@ -23,6 +23,10 @@ import {
     CHANGE_DELIVERY_STATUS_SUCCESS,
     CHANGE_DELIVERY_STATUS_FAIL,
 
+    SEARCH_PRODUCTS_REQUEST,
+    SEARCH_PRODUCTS_SUCCESS,
+    SEARCH_PRODUCTS_FAIL,
+
 } from '../constants/index'
 
 import axios from 'axios'
@@ -228,6 +232,29 @@ export const changeDeliveryStatus = (id, product) => async (dispatch, getState) 
         dispatch({
             type: CHANGE_DELIVERY_STATUS_FAIL,
             payload: error.response && error.response.data.detail ? error.response.data.detail : error.message
+        })
+    }
+}
+
+
+// search products with debouncing
+export const searchProducts = (searchTerm) => async (dispatch) => {
+    try {
+        dispatch({
+            type: SEARCH_PRODUCTS_REQUEST
+        })
+
+        // call api with search parameter
+        const { data } = await axios.get(`/api/products/?search=${encodeURIComponent(searchTerm)}`)
+
+        dispatch({
+            type: SEARCH_PRODUCTS_SUCCESS,
+            payload: data
+        })
+    } catch (error) {
+        dispatch({
+            type: SEARCH_PRODUCTS_FAIL,
+            payload: error.message
         })
     }
 }

@@ -6,6 +6,7 @@ import {
     updateProductReducer,
     deleteProductReducer,
     changeDeliveryStatusReducer,
+    searchProductsReducer,
 } from "./productReducers";
 
 import {
@@ -55,6 +56,7 @@ const allReducers = combineReducers({
     userDetailsReducer,
     userDetailsUpdateReducer,
     deleteUserAccountReducer,
+    searchProductsReducer,
 })
 
 

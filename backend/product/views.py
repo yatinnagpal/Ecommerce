@@ -11,7 +11,18 @@ from rest_framework.decorators import permission_classes
 class ProductView(APIView):
 
     def get(self, request):
-        products = Product.objects.all()
+        search_query = request.GET.get('search', '')
+        
+        if search_query:
+            # Search in product name and description (case-insensitive)
+            products = Product.objects.filter(
+                name__icontains=search_query
+            ) | Product.objects.filter(
+                description__icontains=search_query
+            )
+        else:
+            products = Product.objects.all()
+            
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
