@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react'
-import { Link, useHistory } from 'react-router-dom'
-import { Row, Col, Container, Image, Card } from 'react-bootstrap'
-import { useDispatch, useSelector } from 'react-redux'
-import { getProductDetails } from '../actions/productActions'
-import CreateCardComponent from '../components/CreateCardComponent'
-import ChargeCardComponent from '../components/ChargeCardComponent'
-import Message from '../components/Message'
-import { Spinner } from 'react-bootstrap'
-import { savedCardsList } from '../actions/cardActions'
-import UserAddressComponent from '../components/UserAddressComponent'
-import { checkTokenValidation, logout } from '../actions/userActions'
-import {CHARGE_CARD_RESET} from '../constants/index'
+import React, { useEffect, useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { getProductDetails } from '../actions/productActions';
+import CreateCardComponent from '../components/CreateCardComponent';
+import ChargeCardComponent from '../components/ChargeCardComponent';
+import { savedCardsList } from '../actions/cardActions';
+import UserAddressComponent from '../components/UserAddressComponent';
+import { checkTokenValidation, logout } from '../actions/userActions';
+import { CHARGE_CARD_RESET } from '../constants/index';
+import {
+    Box, Typography, Paper, Grid, Card, CardContent, CardMedia, Alert, CircularProgress, Link as MuiLink
+} from '@mui/material';
 
 const CheckoutPage = ({ match }) => {
 
@@ -69,77 +69,71 @@ const CheckoutPage = ({ match }) => {
       }
 
     return (
-        <div>
-            {cardCreationError ? <Message variant='danger'>{cardCreationError}</Message> : ""}
-            {loading
-                &&
-                <span style={{ display: "flex" }}>
-                    <h5>Getting Checkout Info</h5>
-                    <span className="ml-2">
-                        <Spinner animation="border" />
-                    </span>
-                </span>}
-            {!loading && cardCreationLoading ?
-                <span style={{ display: "flex" }}>
-                    <h5>Checking your card</h5>
-                    <span className="ml-2">
-                        <Spinner animation="border" />
-                    </span>
-                </span> : ""}
-            {error ? <Message variant='danger'>{error}</Message> :
-                <Container>
-                    <Row>
-                        <Col xs={6}>
-                            <h3>Checkout Summary</h3>
-                            <Card className="mb-4">
-                                <Card.Body>
-                                    <Container>
-                                        <Row>
-                                            <Col>
-                                                <Image src={product.image} alt="image" height="180" />
-                                            </Col>
-                                            <Col>
-                                                <h5 className="card-title text-capitalize">
-                                                    {product.name}
-                                                </h5>
-                                                <span className="card-text text-success">₹ {product.price}</span>
-                                            </Col>
-                                        </Row>
-                                    </Container>
-                                </Card.Body>
+        <Box sx={{ p: { xs: 1, md: 4 } }}>
+            {cardCreationError && <Alert severity="error" sx={{ mb: 2 }}>{cardCreationError}</Alert>}
+            {loading && (
+                <Box display="flex" alignItems="center" gap={2} mb={2}>
+                    <Typography variant="h6">Getting Checkout Info</Typography>
+                    <CircularProgress size={28} />
+                </Box>
+            )}
+            {!loading && cardCreationLoading && (
+                <Box display="flex" alignItems="center" gap={2} mb={2}>
+                    <Typography variant="h6">Checking your card</Typography>
+                    <CircularProgress size={28} />
+                </Box>
+            )}
+            {error ? (
+                <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>
+            ) : (
+                <Paper elevation={3} sx={{ p: 3, maxWidth: 1100, mx: 'auto', mt: 2 }}>
+                    <Grid container spacing={4}>
+                        <Grid item xs={12} md={6}>
+                            <Typography variant="h5" fontWeight={700} gutterBottom>Checkout Summary</Typography>
+                            <Card sx={{ display: 'flex', mb: 3 }}>
+                                <CardMedia
+                                    component="img"
+                                    sx={{ width: 140, height: 140, objectFit: 'cover', borderRadius: 2, m: 2 }}
+                                    image={product.image}
+                                    alt={product.name}
+                                />
+                                <CardContent sx={{ flex: 1 }}>
+                                    <Typography variant="h6" fontWeight={600} gutterBottom>{product.name}</Typography>
+                                    <Typography variant="h6" color="success.main">₹ {product.price}</Typography>
+                                </CardContent>
                             </Card>
-
-                            <span style={{ display: "flex" }}>
-                                <h3>Billing Address</h3>
-                                <Link
-                                    className="ml-2 mt-2"
+                            <Box display="flex" alignItems="center" mb={1}>
+                                <Typography variant="h6">Billing Address</Typography>
+                                <MuiLink
+                                    component={Link}
                                     to="/all-addresses/"
+                                    sx={{ ml: 2, mt: 0.5, fontWeight: 500 }}
                                 >
                                     Edit/Add Address
-                                </Link>
-                            </span>
+                                </MuiLink>
+                            </Box>
                             <UserAddressComponent handleAddressId={handleAddressId} />
-                        </Col>
-                        <Col xs={6}>
-                            <h3>
-                                Payments Section
-                            </h3>
-                            {success ?
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <Typography variant="h5" fontWeight={700} gutterBottom>Payments Section</Typography>
+                            {success ? (
                                 <ChargeCardComponent
                                     selectedAddressId={selectedAddressId}
                                     addressSelected={addressSelected}
                                     product={product}
                                 />
-                                :
+                            ) : (
                                 <CreateCardComponent
                                     addressSelected={addressSelected}
-                                    stripeCards={stripeCards} />}
-                        </Col>
-                    </Row>
-                </Container>
-            }
-        </div>
-    )
+                                    stripeCards={stripeCards}
+                                />
+                            )}
+                        </Grid>
+                    </Grid>
+                </Paper>
+            )}
+        </Box>
+    );
 }
 
 export default CheckoutPage

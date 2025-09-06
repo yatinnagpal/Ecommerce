@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { deleteProduct, getProductDetails } from '../actions/productActions'
-import Message from '../components/Message'
-import { Spinner, Row, Col, Container, Card, Button, Modal } from 'react-bootstrap'
-import { Link } from 'react-router-dom'
-import { CREATE_PRODUCT_RESET, DELETE_PRODUCT_RESET, UPDATE_PRODUCT_RESET, CARD_CREATE_RESET } from '../constants'
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteProduct, getProductDetails } from '../actions/productActions';
+import { Link } from 'react-router-dom';
+import { CREATE_PRODUCT_RESET, DELETE_PRODUCT_RESET, UPDATE_PRODUCT_RESET, CARD_CREATE_RESET } from '../constants';
+import {
+    Box, Typography, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
+    Paper, Grid, Alert, CircularProgress, Divider
+} from '@mui/material';
 
 
 function ProductDetailsPage({ history, match }) {
@@ -57,104 +59,109 @@ function ProductDetailsPage({ history, match }) {
     }
 
     return (
-        <div>
-
-            {/* Modal Start*/}
-            <div>
-                <Modal show={show} onHide={handleClose}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>
-                            <i style={{ color: "#e6e600" }} className="fas fa-exclamation-triangle"></i>
-                            {" "}
-                            Delete Confirmation
-                        </Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>Are you sure you want to delete this product <em>"{product.name}"</em>?</Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="danger" onClick={() => confirmDelete()}>
-                            Confirm Delete
-                        </Button>
-                        <Button variant="primary" onClick={handleClose}>
-                            Cancel
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
-            </div>
-
+        <Box sx={{ p: { xs: 1, md: 4 } }}>
+            {/* Modal Start */}
+            <Dialog open={show} onClose={handleClose}>
+                <DialogTitle>
+                    <Typography color="warning.main" component="span" sx={{ mr: 1 }}>
+                        <span role="img" aria-label="warning">⚠️</span>
+                    </Typography>
+                    Delete Confirmation
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Are you sure you want to delete this product <em>"{product.name}"</em>?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button color="error" variant="contained" onClick={confirmDelete}>
+                        Confirm Delete
+                    </Button>
+                    <Button color="primary" variant="outlined" onClick={handleClose}>
+                        Cancel
+                    </Button>
+                </DialogActions>
+            </Dialog>
             {/* Modal End */}
 
-            {loading && <span style={{ display: "flex" }}>
-                <h5>Getting Product Details</h5>
-                <span className="ml-2">
-                    <Spinner animation="border" />
-                </span>
-            </span>}
-            {error ? <Message variant='danger'>{error}</Message>
-                :
-                <div>
-                    <Container>
-                        <Row>
-                            <Col md={6}>
-                                <Card.Img variant="top" src={product.image} height="420" />
-
-                                {/* Product edit and delete conditions */}
-
-                                {userInfo && userInfo.admin ?
-                                    <span style={{ display: "flex" }}>
-                                        < button
-                                            className="btn mt-2 btn-danger btn-sm button-focus-css"
-                                            style={{ width: "100%" }}
-                                            onClick={() => handleShow()}
-                                        >Delete Product
-                                        </button>
-
-                                        <button
-                                            className="ml-2 mt-2 btn btn-primary btn-sm button-focus-css"
+            {loading && (
+                <Box display="flex" alignItems="center" gap={2}>
+                    <Typography variant="h6">Getting Product Details</Typography>
+                    <CircularProgress size={28} />
+                </Box>
+            )}
+            {error ? (
+                <Alert severity="error" sx={{ my: 2 }}>{error}</Alert>
+            ) : (
+                <Paper elevation={3} sx={{ p: 3, maxWidth: 1100, mx: 'auto', mt: 2 }}>
+                    <Grid container spacing={4}>
+                        <Grid item xs={12} md={5}>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <Box
+                                    component="img"
+                                    src={product.image}
+                                    alt={product.name}
+                                    sx={{ width: '100%', maxHeight: 420, objectFit: 'cover', borderRadius: 2, mb: 2 }}
+                                />
+                                {userInfo && userInfo.admin && (
+                                    <Box display="flex" gap={2} width="100%">
+                                        <Button
+                                            variant="contained"
+                                            color="error"
+                                            fullWidth
+                                            onClick={handleShow}
+                                        >
+                                            Delete Product
+                                        </Button>
+                                        <Button
+                                            variant="contained"
+                                            color="primary"
+                                            fullWidth
                                             onClick={() => history.push(`/product-update/${product.id}/`)}
-                                            style={{ width: "100%" }}
-                                        >Edit Product
-                                        </button>
-                                    </span>
-                                    : ""}
-                            </Col>
+                                        >
+                                            Edit Product
+                                        </Button>
+                                    </Box>
+                                )}
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                            <Typography variant="h5" fontWeight={700} gutterBottom>
+                                {product.name}
+                            </Typography>
+                            <Divider sx={{ mb: 2 }} />
+                            <Typography variant="body1" sx={{ mb: 2, whiteSpace: 'pre-line' }}>
+                                {product.description}
+                            </Typography>
+                            <Box display="flex" alignItems="center" border={1} borderColor="#C6ACE7" borderRadius={1} p={1} width="fit-content" mb={2}>
+                                <Typography variant="subtitle1" fontWeight={500} mr={1}>Price:</Typography>
+                                <Typography variant="h6" color="success.main">₹ {product.price}</Typography>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12} md={3}>
+                            <Typography variant="h6" fontWeight={700} gutterBottom>Buy</Typography>
+                            <Divider sx={{ mb: 2 }} />
+                            {product.stock ? (
+                                <Button
+                                    component={Link}
+                                    to={`${product.id}/checkout/`}
+                                    variant="contained"
+                                    color="primary"
+                                    size="large"
+                                    fullWidth
+                                >
+                                    Pay with Stripe
+                                </Button>
+                            ) : (
+                                <Alert severity="error">Out Of Stock!</Alert>
+                            )}
+                        </Grid>
+                    </Grid>
+                </Paper>
+            )}
+        </Box>
 
-                            <Col sm>
-                                <b>{product.name}</b>
-                                <hr />
-                                <span className="justify-description-css">
-                                    <p>{product.description}</p>
-                                </span>
-                                <span style={{
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    border: "1px solid",
-                                    borderColor: "#C6ACE7",
-                                    padding: "2px"
-                                }}>
-                                    Price:<span className="text-success ml-2">₹ {product.price}</span>
-                                </span>
-                            </Col>
-                            <Col sm>
-                                <b>Buy</b>
-                                <hr />
-                                {product.stock ?
-                                    <Link to={`${product.id}/checkout/`}>
-                                        <button className="btn btn-primary">
-                                            <span>Pay with Stripe</span>
-                                        </button>
-                                    </Link>
-                                    :
-                                    <Message variant='danger'>
-                                        Out Of Stock!
-                                    </Message>}
-                            </Col>
-                        </Row>
-
-                    </Container>
-                </div>
-            }
-        </div >
-    )
+    );
 }
 
-export default ProductDetailsPage
+export default ProductDetailsPage;

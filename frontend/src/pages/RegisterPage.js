@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
-import { Form, Button, Row, Col } from 'react-bootstrap'
-import { register } from '../actions/userActions'
-import Message from '../components/Message'
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { register } from '../actions/userActions';
+import { Box, Button, TextField, Typography, Paper, Alert, Stack } from '@mui/material';
 
 function RegisterPage({ history, variant }) {
     const [username, setUsername] = useState("")
@@ -34,86 +33,66 @@ function RegisterPage({ history, variant }) {
     }
 
     return (
-        <div>
-            <Row className='justify-content-md-center'>
-                <Col xs={12} md={6}>
-                    <h1>Sign Up</h1>
-                    {message && <Message variant='danger'>{message}</Message>}
-                    {error && <Message variant='danger'>{error}</Message>}
-                    <Form onSubmit={submitHandler}>
-
-                        <Form.Group controlId='name'>
-                            <Form.Label>
-                                Username
-                            </Form.Label>
-                            <Form.Control
-                                required
-                                type="text"
-                                placeholder="enter your username"
+        <Box display="flex" justifyContent="center" alignItems="center" minHeight="80vh">
+            <Paper elevation={6} sx={{ p: 4, width: 350 }}>
+                <Stack spacing={2}>
+                    <Typography variant="h4" align="center" fontWeight={700} gutterBottom>
+                        Sign Up
+                    </Typography>
+                    {message && <Alert severity="error">{message}</Alert>}
+                    {error && <Alert severity="error">{error}</Alert>}
+                    <form onSubmit={submitHandler}>
+                        <Stack spacing={2}>
+                            <TextField
+                                label="Username"
+                                variant="outlined"
+                                fullWidth
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
-                            >
-                            </Form.Control>
-                        </Form.Group>
-
-                        <Form.Group controlId='email'>
-                            <Form.Label>
-                                Email Address
-                            </Form.Label>
-                            <Form.Control
                                 required
+                            />
+                            <TextField
+                                label="Email Address"
+                                variant="outlined"
                                 type="email"
-                                placeholder="enter your email"
+                                fullWidth
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                            >
-                            </Form.Control>
-                        </Form.Group>
-
-                        <Form.Group controlId='password'>
-                            <Form.Label>
-                                Password
-                            </Form.Label>
-                            <Form.Control
                                 required
+                            />
+                            <TextField
+                                label="Password"
+                                variant="outlined"
                                 type="password"
-                                placeholder="enter your password"
+                                fullWidth
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                            >
-                            </Form.Control>
-                        </Form.Group>
-
-                        <Form.Group controlId='passwordConfirm'>
-                            <Form.Label>
-                                Confirm Password
-                            </Form.Label>
-                            <Form.Control
                                 required
+                            />
+                            <TextField
+                                label="Confirm Password"
+                                variant="outlined"
                                 type="password"
-                                placeholder="confirm your password"
+                                fullWidth
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
-                            >
-                            </Form.Control>
-                        </Form.Group>
-
-                        <Button type="submit" variant='primary'>Sign Up</Button>
-                    </Form>
-
-                    <Row className="py-3">
-                        <Col>
-                            Already have an account?
-                    <Link
-                                to={`/login`}
-                            > Login</Link>
-                        </Col>
-                    </Row>
-                </Col>
-            </Row>
-        </div>
-
-    )
+                                required
+                            />
+                            <Button type="submit" variant="contained" color="primary" size="large" fullWidth>
+                                Sign Up
+                            </Button>
+                        </Stack>
+                    </form>
+                    <Typography align="center" sx={{ mt: 2 }}>
+                        Already have an account?{' '}
+                        <Link to="/login" style={{ textDecoration: 'none', color: '#1976d2', fontWeight: 500 }}>
+                            Login
+                        </Link>
+                    </Typography>
+                </Stack>
+            </Paper>
+        </Box>
+    );
 }
 
 export default RegisterPage
