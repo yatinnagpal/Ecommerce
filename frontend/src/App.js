@@ -41,6 +41,7 @@ import OrdersListPage from './pages/OrdersListPage';
 import ProductCreatePage from './pages/ProductCreatePage';
 import ProductUpdatePage from './pages/ProductUpdatePage';
 import NotFound from './pages/NotFoundPage';
+import CartPage from './pages/CartPage';
 
 // Initialize Stripe with publishable key
 const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
@@ -117,13 +118,15 @@ const App = () => {
               <Switch>
                 {/* Public routes */}
                 <Route path="/" component={ProductListPage} exact />
-                <Route path="/product/:id/" component={ProductDetailsPage} exact />
+                <Route path="/products/:id/" component={ProductDetailsPage} exact />
                 <Route path="/product/:id/checkout/" component={CheckoutPage} exact />
                 <Route path="/payment-status" component={PaymentStatus} exact />
                 <Route path="/login" component={LoginPage} exact />
                 <Route path="/register" component={RegisterPage} exact />
                 <Route path="/forgot-password" component={ForgotPasswordPage} exact />
                 <Route path="/reset-password" component={ResetPasswordPage} exact />
+                <Route path="/cart" component={CartPage} exact />
+                <Route path="/checkout" component={CheckoutPage} exact />
                 
                 {/* Protected user routes */}
                 <Route path="/account" component={AccountPage} exact />

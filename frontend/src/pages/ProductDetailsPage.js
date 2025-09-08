@@ -1,66 +1,69 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteProduct, getProductDetails } from '../actions/productActions';
+import { addToCart } from '../actions/cartActions';
 import { Link } from 'react-router-dom';
 import { CREATE_PRODUCT_RESET, DELETE_PRODUCT_RESET, UPDATE_PRODUCT_RESET, CARD_CREATE_RESET } from '../constants';
 import {
     Box, Typography, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
-    Paper, Grid, Alert, CircularProgress, Divider
+    Paper, Grid, Alert, CircularProgress, Divider, Select, MenuItem, FormControl, InputLabel
 } from '@mui/material';
-
 
 function ProductDetailsPage({ history, match }) {
 
-    const dispatch = useDispatch()
+    const [qty, setQty] = useState(1);
+    const dispatch = useDispatch();
 
-    // modal state and functions
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    // product details reducer
-    const productDetailsReducer = useSelector(state => state.productDetailsReducer)
-    const { loading, error, product } = productDetailsReducer
+    const productDetailsReducer = useSelector(state => state.productDetailsReducer);
+    const { loading, error, product } = productDetailsReducer;
 
-    // login reducer
-    const userLoginReducer = useSelector(state => state.userLoginReducer)
-    const { userInfo } = userLoginReducer
+    const userLoginReducer = useSelector(state => state.userLoginReducer);
+    const { userInfo } = userLoginReducer;
 
-    // product details reducer
-    const deleteProductReducer = useSelector(state => state.deleteProductReducer)
-    const { success: productDeletionSuccess } = deleteProductReducer
+    const deleteProductReducer = useSelector(state => state.deleteProductReducer);
+    const { success: productDeletionSuccess } = deleteProductReducer;
 
     useEffect(() => {
-        dispatch(getProductDetails(match.params.id))
-        dispatch({
-            type: UPDATE_PRODUCT_RESET
-        })
-        dispatch({
-            type: CREATE_PRODUCT_RESET
-        })
-        dispatch({
-            type: CARD_CREATE_RESET
-        })
-    }, [dispatch, match])
+        dispatch(getProductDetails(match.params.id));
+        dispatch({ type: UPDATE_PRODUCT_RESET });
+        dispatch({ type: CREATE_PRODUCT_RESET });
+        dispatch({ type: CARD_CREATE_RESET });
+    }, [dispatch, match]);
 
-    // product delete confirmation
     const confirmDelete = () => {
-        dispatch(deleteProduct(match.params.id))
-        handleClose()
+        dispatch(deleteProduct(match.params.id));
+        handleClose();
+    };
+
+    if (productDeletionSuccess) {
+        alert("Product successfully deleted.");
+        history.push("/");
+        dispatch({ type: DELETE_PRODUCT_RESET });
     }
 
-    // after product deletion
-    if (productDeletionSuccess) {
-        alert("Product successfully deleted.")
-        history.push("/")
-        dispatch({
-            type: DELETE_PRODUCT_RESET
-        })
-    }
+    const addToCartHandler = () => {
+        if (userInfo) {
+            dispatch(addToCart(match.params.id, qty));
+            history.push('/cart');
+        } else {
+            history.push('/login');
+        }
+    };
+
+    const buyNowHandler = () => {
+        if (userInfo) {
+            history.push(`/product/${product.id}/checkout/?qty=${qty}`);
+        } else {
+            history.push('/login');
+        }
+    };
 
     return (
         <Box sx={{ p: { xs: 1, md: 4 } }}>
-            {/* Modal Start */}
             <Dialog open={show} onClose={handleClose}>
                 <DialogTitle>
                     <Typography color="warning.main" component="span" sx={{ mr: 1 }}>
@@ -82,15 +85,13 @@ function ProductDetailsPage({ history, match }) {
                     </Button>
                 </DialogActions>
             </Dialog>
-            {/* Modal End */}
 
-            {loading && (
+            {loading ? (
                 <Box display="flex" alignItems="center" gap={2}>
                     <Typography variant="h6">Getting Product Details</Typography>
                     <CircularProgress size={28} />
                 </Box>
-            )}
-            {error ? (
+            ) : error ? (
                 <Alert severity="error" sx={{ my: 2 }}>{error}</Alert>
             ) : (
                 <Paper elevation={3} sx={{ p: 3, maxWidth: 1100, mx: 'auto', mt: 2 }}>
@@ -105,20 +106,10 @@ function ProductDetailsPage({ history, match }) {
                                 />
                                 {userInfo && userInfo.admin && (
                                     <Box display="flex" gap={2} width="100%">
-                                        <Button
-                                            variant="contained"
-                                            color="error"
-                                            fullWidth
-                                            onClick={handleShow}
-                                        >
+                                        <Button variant="contained" color="error" fullWidth onClick={handleShow}>
                                             Delete Product
                                         </Button>
-                                        <Button
-                                            variant="contained"
-                                            color="primary"
-                                            fullWidth
-                                            onClick={() => history.push(`/product-update/${product.id}/`)}
-                                        >
+                                        <Button variant="contained" color="primary" fullWidth onClick={() => history.push(`/product-update/${product.id}/`)}>
                                             Edit Product
                                         </Button>
                                     </Box>
@@ -139,19 +130,44 @@ function ProductDetailsPage({ history, match }) {
                             </Box>
                         </Grid>
                         <Grid item xs={12} md={3}>
-                            <Typography variant="h6" fontWeight={700} gutterBottom>Buy</Typography>
+                            <Typography variant="h6" fontWeight={700} gutterBottom>Action</Typography>
                             <Divider sx={{ mb: 2 }} />
-                            {product.stock ? (
-                                <Button
-                                    component={Link}
-                                    to={`${product.id}/checkout/`}
-                                    variant="contained"
-                                    color="primary"
-                                    size="large"
-                                    fullWidth
-                                >
-                                    Pay with Stripe
-                                </Button>
+                            {product.stock > 0 ? (
+                                <Box>
+                                    <FormControl fullWidth sx={{ mb: 2 }}>
+                                        <InputLabel>Qty</InputLabel>
+                                        <Select
+                                            value={qty}
+                                            label="Qty"
+                                            onChange={(e) => setQty(e.target.value)}
+                                        >
+                                            {[...Array(Math.min(product.stock, 10)).keys()].map((x) => (
+                                                <MenuItem key={x + 1} value={x + 1}>
+                                                    {x + 1}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                                    <Button
+                                        onClick={addToCartHandler}
+                                        variant="contained"
+                                        color="primary"
+                                        size="large"
+                                        fullWidth
+                                        sx={{ mb: 1 }}
+                                    >
+                                        Add to Cart
+                                    </Button>
+                                    <Button
+                                        onClick={buyNowHandler}
+                                        variant="outlined"
+                                        color="secondary"
+                                        size="large"
+                                        fullWidth
+                                    >
+                                        Buy Now
+                                    </Button>
+                                </Box>
                             ) : (
                                 <Alert severity="error">Out Of Stock!</Alert>
                             )}
@@ -160,7 +176,6 @@ function ProductDetailsPage({ history, match }) {
                 </Paper>
             )}
         </Box>
-
     );
 }
 

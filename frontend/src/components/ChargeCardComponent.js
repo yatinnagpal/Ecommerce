@@ -8,7 +8,7 @@ import { getSingleAddress } from '../actions/userActions'
 import Message from './Message'
 
 
-const ChargeCardComponent = ({ product, match, selectedAddressId, addressSelected }) => {
+const ChargeCardComponent = ({ product, cartItems, totalPrice, selectedAddressId, addressSelected }) => {
 
     let history = useHistory()
     const dispatch = useDispatch()
@@ -29,43 +29,55 @@ const ChargeCardComponent = ({ product, match, selectedAddressId, addressSelecte
     const getSingleAddressReducer = useSelector(state => state.getSingleAddressReducer)
     const { address } = getSingleAddressReducer
 
+    // Determine the item(s) being charged
+    const isSingleProductCheckout = product && product.id;
+    const itemsToCharge = isSingleProductCheckout ? [product] : cartItems;
+    const amountToCharge = isSingleProductCheckout ? product.price : totalPrice;
+
     useEffect(() => {
         dispatch(getSingleAddress(selectedAddressId))
-    }, [dispatch, match, selectedAddressId])
+    }, [dispatch, selectedAddressId])
 
     // charge card handler
     const onSubmit = (e) => {
         e.preventDefault()
+        
+        if (!addressSelected) {
+            alert("Please select an address first.");
+            return;
+        }
+
         const address_detail = `${address.house_no}, near ${address.landmark}, ${address.city}, 
-        ${address.state}, ${address.pin_code}`
+        ${address.state}, ${address.pin_code}`;
         const paymentMethodId = cardData && cardData.id ? cardData.id : (cardData && cardData.payment_method_id ? cardData.payment_method_id : undefined);
-        console.log('ChargeCardComponent payment_method:', paymentMethodId, 'cardData:', cardData);
+        
         if (!paymentMethodId) {
             alert('No payment method found. Please try again.');
             return;
         }
+
         const data = {
             "email": (cardData && cardData.email) ? cardData.email : (userInfo ? userInfo.email : ""),
             "payment_method": paymentMethodId,
-            "amount": product.price,
+            "amount": amountToCharge,
             "name": address.name,
             "card_number": cardData && cardData.card_data ? cardData.card_data.last4 : "",
             "address": address_detail,
-            "ordered_item": product.name,
+            "ordered_item": isSingleProductCheckout ? product.name : "Multiple Items", // Adjust for multiple items
             "paid_status": true,
-            "total_price": product.price,
+            "total_price": amountToCharge,
             "is_delivered": false,
             "delivered_at": "Not Delivered",
-        }
-        dispatch(chargeCustomer(data))
-    }
+        };
+        dispatch(chargeCustomer(data));
+    };
 
     if (chargeSuccessfull) {
         history.push({
             pathname: '/payment-status/',
-            state: { detail: product }
-        })
-        window.location.reload()
+            state: { detail: isSingleProductCheckout ? product : { name: "Multiple Items", price: totalPrice } } // Adjust detail for multiple items
+        });
+        window.location.reload();
     }
 
     return (
@@ -92,7 +104,7 @@ const ChargeCardComponent = ({ product, match, selectedAddressId, addressSelecte
                     </Button>
                     :
                     <Button variant="primary" type="submit" style={{ width: "100%" }}>
-                        Pay ₹{product.price}
+                        Pay ₹{amountToCharge ? amountToCharge.toFixed(2) : '0.00'}
                     </Button>
                 }
             </Form>

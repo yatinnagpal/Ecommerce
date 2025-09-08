@@ -32,6 +32,8 @@ import {
     getAllOrdersReducer,
 } from "./userReducers";
 
+import { cartReducer } from './cartReducers';
+
 const allReducers = combineReducers({
     productsListReducer,
     productDetailsReducer,
@@ -57,6 +59,7 @@ const allReducers = combineReducers({
     userDetailsUpdateReducer,
     deleteUserAccountReducer,
     searchProductsReducer,
+    cart: cartReducer,
 })
 
 
